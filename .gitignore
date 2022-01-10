@@ -1,0 +1,7 @@
+﻿.idea
+server/node_modules
+client/node_modules
+client/dist
+client/.env.local
+server/.env
+server/.env.production
