@@ -16,7 +16,7 @@ import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   debug: false,
   //connection: window.location+':5000',
-  connection: 'https://tictactoe-vuejs.herokuapp.com:3009',
+  connection: 'https://tictactoe-vuejs.herokuapp.com:5000',
   //connection: 'https://tictactoe-vuejs.herokuapp.com',
   //connection: 'http://localhost:5000',
   options: {
