@@ -15,7 +15,7 @@ Vue.component('default_layout', Default);
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   debug: false,
-  connection: 'http://localhost:3009',
+  connection: window.location+':3009',
   options: {
     'reconnection': true,
     'reconnectionDelay': 1000,
