@@ -1,12 +1,10 @@
-const Mysql = require('mysql');
-const fs = require('fs');
 const express = require('express');
 const serveStatic = require("serve-static")
 const path = require('path');
 
 const DEBUG = true;
 const sessions = [];
-
+const PORT = process.env.PORT || 5000;
 
 ////////////////////////////////////////////////////////////////////
 ////////////////    START APP CLIENT      //////////////////////////
@@ -16,8 +14,8 @@ const app = express();
 // Priority serve any static files.
 app.use(serveStatic(path.resolve(__dirname, '../client/dist')));
 
-app.listen(5000, function () {
-    console.error(`Node server' : 'cluster worker '+process.pid}: listening on port 5000`);
+app.listen(PORT, function () {
+    console.log(`Our app is running on port ${ PORT }`);
 });
 
 ////////////////////////////////////////////////////////////////////
