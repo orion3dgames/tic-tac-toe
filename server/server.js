@@ -10,13 +10,17 @@ const PORT = process.env.PORT || 5000;
 ////////////////    START APP CLIENT      //////////////////////////
 
 const app = express();
-
+app.get('/', (req, res) => {
+    console.error('express connection');
+    res.sendFile(path.join(__dirname, '../client/dist'));
+});
+/*
 // Priority serve any static files.
 app.use(serveStatic(path.resolve(__dirname, '../client/dist')));
 
 app.listen(PORT, function () {
     console.log(`Our app is running on port ${ PORT }`);
-});
+});*/
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
