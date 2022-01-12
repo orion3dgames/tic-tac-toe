@@ -1,0 +1,25 @@
+{
+  "name": "tictactoe-vuejs",
+  "version": "1.0",
+  "description": "A basic multiplayer tic tac toe, using sockets",
+  "engines": {
+    "node": "12.x"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "build": "cd client/ && npm install && npm run build"
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "client/node_modules"
+  ],
+  "dependencies": {
+    "async": "^2.5.0",
+    "dotenv": "^8.2.0",
+    "forever": "^3.0.0",
+    "http": "^0.0.0",
+    "moment-timezone": "^0.5.13",
+    "mysql": "^2.18.1",
+    "socket.io": "^2.3.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "tictactoe-vuejs",
+  "description": "A basic multiplayer tic tac toe, using sockets",
+  "scripts": {
+  },
+  "env": {
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}

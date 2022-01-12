@@ -1,7 +1,13 @@
-﻿.idea
-server/node_modules
-client/node_modules
-client/dist
-client/.env.local
-server/.env
-server/.env.production
+﻿# Node build artifacts
+node_modules
+npm-debug.log
+
+# Local development
+*.env
+*.dev
+.idea
+.DS_Store
+
+# Docker
+Dockerfile
+docker-compose.yml
