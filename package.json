@@ -7,8 +7,7 @@
   },
   "scripts": {
     "start": "node server/server.js",
-    "build": "cd client/ && npm install && npm run build",
-    "heroku-postbuild": "heroku config:set NPM_CONFIG_PRODUCTION=false YARN_PRODUCTION=false"
+    "build": "cd client/ && yarn install && yarn build",
   },
   "cacheDirectories": [
     "node_modules",
