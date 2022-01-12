@@ -1,6 +1,6 @@
 {
   "name": "tictactoe-vuejs",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "A basic multiplayer tic tac toe, using sockets",
   "engines": {
     "node": "12.x"
