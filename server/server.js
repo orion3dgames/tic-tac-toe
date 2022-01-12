@@ -1,8 +1,35 @@
 const Mysql = require('mysql');
 const fs = require('fs');
+const express = require('express');
+const path = require('path');
 
 const DEBUG = true;
 const sessions = [];
+
+
+////////////////////////////////////////////////////////////////////
+////////////////    START APP CLIENT      //////////////////////////
+
+const app = express();
+
+// Priority serve any static files.
+app.use(express.static(path.resolve(__dirname, '../client/build')));
+
+// All remaining requests return the vue.js app, so it can handle routing.
+app.get('/', function(request, response) {
+    response.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+});
+
+app.listen(5000, function () {
+    console.error(`Node server' : 'cluster worker '+process.pid}: listening on port 5000`);
+});
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////
+////////////////    START SOCKET IO SERVER      //////////////////////////
 
 // SETTINGS
 const global_settings = {
@@ -15,14 +42,6 @@ var io_config = {
     pingTimeout: 60000, // MS
 }
 
-debugLog('[LOCAL MODE STARTED]', process.env.DB_HOST);
-var DB = Mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT
-});
 var chat_server = require('http').createServer();
 
 // START IO SERVER
@@ -40,7 +59,7 @@ io.attach(chat_server, {
 
 // CHAT INITIALIZATION
 chat_server.listen(io_config.port, function () {
-    console.log('Server started on port '+io_config.port);
+    console.log('Socket Server started on port '+io_config.port);
 });
 
 // SOCKET EVENTS
