@@ -5,23 +5,22 @@ const socketIO = require('socket.io');
 const DEBUG = true;
 const sessions = [];
 const PORT = process.env.PORT || 5000;
-let indexPath = path.join(__dirname, "../client/dist");
+let indexPath = "/client/dist/index.html";
 
 ////////////////////////////////////////////////////////////////////
 ////////////////    START APP CLIENT      //////////////////////////
 
-console.log("SERVING VUE.JS FILE: "+indexPath);
+console.log("SERVING VUE.JS FILE: "+__dirname+indexPath);
 const app = express();
-app.use(express.static(indexPath));
-app.get('/', function(req, res) { res.sendFile(indexPath); });
-app.get('/play/', function(req, res) { res.sendFile(indexPath); });
-
-const server = app.listen(PORT, function() {
-    console.log('server running on port '+PORT);
-});
+app.use(express.static('client/dist/'));
+app.get('/', function(req, res) { res.sendFile(indexPath,{ root: __dirname }); });
+app.get('/play', function(req, res) { res.sendFile(indexPath,{ root: __dirname }); });
 
 ////////////////////////////////////////////////////////////////////
 ////////////////  START SOCKET IO SERVER  //////////////////////////
+
+const server = require('http').createServer(app);
+server.listen(PORT);
 
 const io = socketIO(server, {
     path: '/socket.io',
