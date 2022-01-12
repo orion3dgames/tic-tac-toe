@@ -1,6 +1,7 @@
 const Mysql = require('mysql');
 const fs = require('fs');
 const express = require('express');
+const serveStatic = require("serve-static")
 const path = require('path');
 
 const DEBUG = true;
@@ -13,12 +14,7 @@ const sessions = [];
 const app = express();
 
 // Priority serve any static files.
-app.use(express.static(path.resolve(__dirname, '../client/dist')));
-
-// All remaining requests return the vue.js app, so it can handle routing.
-app.get('*', function(request, response) {
-    response.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
-});
+app.use(serveStatic(path.resolve(__dirname, '../client/dist')));
 
 app.listen(5000, function () {
     console.error(`Node server' : 'cluster worker '+process.pid}: listening on port 5000`);
