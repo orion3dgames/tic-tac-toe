@@ -12,11 +12,12 @@ import Default from "./layouts/Default";
 Vue.component('default_layout', Default);
 
 // START SOCKET IO
-console.log(window.location+':5000');
+console.log(window.location);
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   debug: false,
-  connection: window.location+':5000',
+  //connection: window.location+':5000',
+  connection: 'https://tictactoe-vuejs.herokuapp.com:5000/',
   options: {
     'reconnectionDelay': 1000,
     'reconnectionDelayMax' : 5000,
