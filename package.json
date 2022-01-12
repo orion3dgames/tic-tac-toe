@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "node server/server.js",
-    "build": "cd client/ && yarn install && yarn build",
+    "build": "cd client/ && yarn install && yarn build"
   },
   "cacheDirectories": [
     "node_modules",
