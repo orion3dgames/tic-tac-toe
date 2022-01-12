@@ -10,7 +10,6 @@ let indexPath = "/client/dist/index.html";
 ////////////////////////////////////////////////////////////////////
 ////////////////    START APP CLIENT      //////////////////////////
 
-console.log("SERVING VUE.JS FILE: "+__dirname+indexPath);
 const app = express();
 app.use(express.static('client/dist/'));
 app.get('/', function(req, res) { res.sendFile(indexPath,{ root: __dirname }); });
@@ -20,7 +19,9 @@ app.get('/play', function(req, res) { res.sendFile(indexPath,{ root: __dirname }
 ////////////////  START SOCKET IO SERVER  //////////////////////////
 
 const server = require('http').createServer(app);
-server.listen(PORT);
+server.listen(PORT, function () {
+    console.log('Socket Server started on port '+PORT);
+});
 
 const io = socketIO(server, {
     path: '/socket.io',
@@ -60,7 +61,7 @@ chat_server.listen(io_config.port, function () {
 });*/
 
 // SOCKET EVENTS
-io.of("/").on('connection', (socket) => {
+io.on('connection', (socket) => {
 
     debugLog('[IO] Connected: ', socket.nsp);
 
