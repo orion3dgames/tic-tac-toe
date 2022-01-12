@@ -14,20 +14,11 @@ console.log("SERVING VUE.JS FILE: "+indexPath);
 const app = express();
 app.use(express.static(indexPath));
 app.get('/', function(req, res) { res.sendFile(indexPath); });
-app.get('/play', function(req, res) { res.sendFile(indexPath); });
+app.get('/play/', function(req, res) { res.sendFile(indexPath); });
 
 const server = app.listen(PORT, function() {
     console.log('server running on port '+PORT);
 });
-
-/*
-const app = express();
-app.listen(PORT, function() {
-    console.log("server running on port "+PORT);
-});
-app.get('/', function (req, res) {
-    res.sendFile(indexPath);
-});*/
 
 ////////////////////////////////////////////////////////////////////
 ////////////////  START SOCKET IO SERVER  //////////////////////////
