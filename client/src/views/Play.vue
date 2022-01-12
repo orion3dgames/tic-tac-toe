@@ -106,7 +106,7 @@ export default {
       return this.$cookie.get('name');
     },
     share_url(){
-      return "http://localhost:8080/play/"+this.hash;
+      return window.location;
     }
   },
   mounted: function () {

@@ -13,11 +13,11 @@ const sessions = [];
 const app = express();
 
 // Priority serve any static files.
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+app.use(express.static(path.resolve(__dirname, '../client/dist')));
 
 // All remaining requests return the vue.js app, so it can handle routing.
-app.get('/', function(request, response) {
-    response.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+app.get('*', function(request, response) {
+    response.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
 });
 
 app.listen(5000, function () {
