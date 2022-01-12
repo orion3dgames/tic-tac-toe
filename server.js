@@ -19,8 +19,8 @@ app.get('/play', function(req, res) { res.sendFile(indexPath,{ root: __dirname }
 ////////////////  START SOCKET IO SERVER  //////////////////////////
 
 const server = require('http').createServer(app);
-server.listen(PORT, function () {
-    console.log('Socket Server started on port '+PORT);
+server.listen(3009, function () {
+    console.log('Socket Server started on port 3009 ');
 });
 
 const io = socketIO(server, {
