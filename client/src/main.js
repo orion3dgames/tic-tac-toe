@@ -12,11 +12,12 @@ import Default from "./layouts/Default";
 Vue.component('default_layout', Default);
 
 // START SOCKET IO
+console.log('https://tictactoe-vuejs.herokuapp.com:'+process.env.PORT);
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   debug: false,
   //connection: window.location+':5000',
-  connection: 'https://tictactoe-vuejs.herokuapp.com:5000',
+  connection: 'https://tictactoe-vuejs.herokuapp.com:'+process.env.PORT,
   //connection: 'https://tictactoe-vuejs.herokuapp.com',
   //connection: 'http://localhost:5000',
   options: {
