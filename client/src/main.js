@@ -12,12 +12,12 @@ import Default from "./layouts/Default";
 Vue.component('default_layout', Default);
 
 // START SOCKET IO
+console.log(window.location+':5000');
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   debug: false,
-  connection: window.location+':3009',
+  connection: window.location+':5000',
   options: {
-    'reconnection': true,
     'reconnectionDelay': 1000,
     'reconnectionDelayMax' : 5000,
     'reconnectionAttempts': 1

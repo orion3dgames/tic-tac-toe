@@ -1,37 +1,52 @@
 const express = require('express');
-const serveStatic = require("serve-static")
 const path = require('path');
+const socketIO = require('socket.io');
 
 const DEBUG = true;
 const sessions = [];
 const PORT = process.env.PORT || 5000;
+let indexPath = path.join(__dirname, "../client/dist");
 
 ////////////////////////////////////////////////////////////////////
 ////////////////    START APP CLIENT      //////////////////////////
 
+console.log("SERVING VUE.JS FILE: "+indexPath);
 const app = express();
-app.use(express.static(path.join(__dirname, '../client/dist')));
-app.listen(PORT, function () {
-    console.log(`Our app is running on port ${ PORT }`);
+app.use(express.static(indexPath));
+app.get('/', function(req, res) { res.sendFile(indexPath); });
+
+const server = app.listen(PORT, function() {
+    console.log('server running on port '+PORT);
 });
 
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
+/*
+const app = express();
+app.listen(PORT, function() {
+    console.log("server running on port "+PORT);
+});
+app.get('/', function (req, res) {
+    res.sendFile(indexPath);
+});*/
 
 ////////////////////////////////////////////////////////////////////
 ////////////////  START SOCKET IO SERVER  //////////////////////////
+
+const io = socketIO(server, {
+    path: '/socket.io',
+    serveClient: false,
+});
+
+/*
+
+var io_config = {
+    pingInterval: 25000, // MS
+    pingTimeout: 60000, // MS
+}
 
 // SETTINGS
 const global_settings = {
     var: 1
 };
-
-var io_config = {
-    port: 3009,
-    pingInterval: 25000, // MS
-    pingTimeout: 60000, // MS
-}
 
 var chat_server = require('http').createServer();
 
@@ -51,12 +66,12 @@ io.attach(chat_server, {
 // CHAT INITIALIZATION
 chat_server.listen(io_config.port, function () {
     console.log('Socket Server started on port '+io_config.port);
-});
+});*/
 
 // SOCKET EVENTS
-io.on('connection', (socket) => {
+io.of("/").on('connection', (socket) => {
 
-    debugLog('[IO] Connected: ', socket.id);
+    debugLog('[IO] Connected: ', socket.nsp);
 
     socket.on('create_game', (data) => {
         debugLog('[create_game] Create Game Received', data.hash);
