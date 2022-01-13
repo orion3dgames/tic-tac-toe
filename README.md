@@ -20,6 +20,13 @@ I'm going to build it quick and dirty and then refine until I'm happy with the r
 ## LATEST UPDATES
 - 13/01/2022: Refactored the server and architecture to work with HEROKU + Added a demo link.
 - 12/01/2022: Initial quick and dirty version
+
+## HOW TO USE
+- Clone the repository
+- npm install (install server dependencies)
+- npm build (install client dependencies & build the client for production)
+- npm start (launch the socket server and web server)
+- go to "localhost:5000" to view the game.
    
 ## Technology
 I will be using the simplest possible implementation.
