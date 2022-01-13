@@ -9,7 +9,7 @@ I'm going to build it quick and dirty and then refine until I'm happy with the r
 - Play a game of tic tac toe and keep track of the scores
 - Refactoring the code to make it as clean and simple as possible
    
-## FEATURES
+## Features
 - Create and share a link (DONE)
 - Game waiting room until 2 players join with the same sharing link (DONE)
 - Playing the tic tac toe game (DONE)
@@ -17,7 +17,7 @@ I'm going to build it quick and dirty and then refine until I'm happy with the r
 - Implement a better scoring system ()
 - Implement a database system  (like Firebase)
    
-## LATEST UPDATES
+## Latest Updates
 - 13/01/2022: Refactored the server and architecture to work with HEROKU + Added a demo link.
 - 12/01/2022: Initial quick and dirty version
 
