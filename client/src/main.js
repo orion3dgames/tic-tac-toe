@@ -12,7 +12,7 @@ import Default from "./layouts/Default";
 Vue.component('default_layout', Default);
 
 // START SOCKET IO
-console.log('https://tictactoe-vuejs.herokuapp.com:'+process.env.PORT);
+console.log('https://tictactoe-vuejs.herokuapp.com');
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   debug: false,
