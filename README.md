@@ -21,7 +21,7 @@ I'm going to build it quick and dirty and then refine until I'm happy with the r
 - 13/01/2022: Refactored the server and architecture to work with HEROKU + Added a demo link.
 - 12/01/2022: Initial quick and dirty version
 
-## HOW TO USE
+## Installation Guide
 - Clone the repository
 - npm install (install server dependencies)
 - npm build (install client dependencies & build the client for production)

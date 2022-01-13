@@ -1,64 +1,46 @@
 const express = require('express');
-const path = require('path');
 const socketIO = require('socket.io');
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 
 const DEBUG = true;
-const sessions = [];
-const PORT = process.env.PORT || 5000;
-let indexPath = "/client/dist/index.html";
+const SESSIONS = [];
+const PORT = process.env.PORT || 8080;
 
 ////////////////////////////////////////////////////////////////////
 ////////////////    START APP CLIENT      //////////////////////////
 
-const app = express();
-app.use(express.static('client/dist/'));
-app.get('/', function(req, res) { res.sendFile(indexPath,{ root: __dirname }); });
-app.get('/play', function(req, res) { res.sendFile(indexPath,{ root: __dirname }); });
+// ONLY USE THIS WHEN IN PRODUCTION (locally we will use yarn serve directly in the client folder)
 
-////////////////////////////////////////////////////////////////////
-////////////////  START SOCKET IO SERVER  //////////////////////////
+
+    let indexPath = "client/dist/";
+    let clientFile = "/index.html";
+
+    const app = express();
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(indexPath));
+    app.get('/', function (req, res) {
+        res.sendFile(indexPath + clientFile, {root: __dirname});
+    });
+    app.get('/play', function (req, res) {
+        res.sendFile(indexPath + clientFile, {root: __dirname});
+    });
+
+}
 
 const server = require('http').createServer(app);
 server.listen(PORT, function () {
     console.log('Socket Server started on port '+PORT);
 });
 
+////////////////////////////////////////////////////////////////////
+////////////////  START SOCKET IO SERVER  //////////////////////////
+
 const io = socketIO(server, {
     path: '/socket.io',
     serveClient: false,
 });
-
-/*
-
-var io_config = {
-    pingInterval: 25000, // MS
-    pingTimeout: 60000, // MS
-}
-
-// SETTINGS
-const global_settings = {
-    var: 1
-};
-
-var chat_server = require('http').createServer();
-
-// START IO SERVER
-var io = require('socket.io')({
-    path: io_config.path,
-    serveClient: false,
-});
-
-// ATTACH SERVER
-io.attach(chat_server, {
-    pingInterval: io_config.pingInterval,
-    pingTimeout: io_config.pingTimeout,
-    cookie: false
-});
-
-// CHAT INITIALIZATION
-chat_server.listen(io_config.port, function () {
-    console.log('Socket Server started on port '+io_config.port);
-});*/
 
 // SOCKET EVENTS
 io.on('connection', (socket) => {
@@ -75,18 +57,18 @@ io.on('connection', (socket) => {
             'play_board': ["", "", "", "", "", "", "", "", ""],
             'started': 0
         }
-        sessions.push(game_session);
+        SESSIONS.push(game_session);
     });
 
     socket.on('start_game', (data) => {
 
         var foundIndex = findSession(""+data.hash);
         if (foundIndex) {
-            sessions[foundIndex].started = 1;
-            sessions[foundIndex].player_turn = sessions[foundIndex].players[0].name;
+            SESSIONS[foundIndex].started = 1;
+            SESSIONS[foundIndex].player_turn = SESSIONS[foundIndex].players[0].name;
 
             // give update to room
-            io.to(data.hash).emit('session_update', sessions[foundIndex]);
+            io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
         }
     });
 
@@ -100,11 +82,11 @@ io.on('connection', (socket) => {
             var foundUserIndex = findUserInSession(data.name, data.hash);
 
             // check if room is full
-            if(sessions[foundIndex].players.length < 2 || foundUserIndex){
+            if(SESSIONS[foundIndex].players.length < 2 || foundUserIndex){
 
                 // add player
                 if(!foundUserIndex){
-                    sessions[foundIndex].players.push({
+                    SESSIONS[foundIndex].players.push({
                         'socket_id': socket.id,
                         'name': data.name,
                     });
@@ -115,7 +97,7 @@ io.on('connection', (socket) => {
                 debugLog('[join_game] Socket Room Joined', data.hash);
 
                 // give update to room
-                io.to(data.hash).emit('session_update', sessions[foundIndex]);
+                io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
                 debugLog('[session_update] Session updated', data.hash);
 
             }else{
@@ -136,13 +118,13 @@ io.on('connection', (socket) => {
         var foundIndex = findSession(""+data.hash);
         if (foundIndex) {
 
-            sessions[foundIndex].current_symbol = sessions[foundIndex].current_symbol === 'O' ? 'X':'O';
+            SESSIONS[foundIndex].current_symbol = SESSIONS[foundIndex].current_symbol === 'O' ? 'X':'O';
 
             //
-            sessions[foundIndex].play_board[data.index] = sessions[foundIndex].current_symbol;
+            SESSIONS[foundIndex].play_board[data.index] = SESSIONS[foundIndex].current_symbol;
 
             // CHECK FOR WIN
-            if(checkForWinners(sessions[foundIndex].play_board)){
+            if(checkForWinners(SESSIONS[foundIndex].play_board)){
                 console.log(data, "HAS WON");
                 io.to(data.hash).emit('player_won', data);
 
@@ -150,28 +132,28 @@ io.on('connection', (socket) => {
             }else{
 
                 // switch turn
-                for (let s in sessions[foundIndex].players) {
-                    if (data.name !== sessions[foundIndex].players[s].name) {
-                        sessions[foundIndex].player_turn = sessions[foundIndex].players[s].name;
+                for (let s in SESSIONS[foundIndex].players) {
+                    if (data.name !== SESSIONS[foundIndex].players[s].name) {
+                        SESSIONS[foundIndex].player_turn = SESSIONS[foundIndex].players[s].name;
                     }
                 }
 
             }
 
             // give update to room
-            io.to(data.hash).emit('session_update', sessions[foundIndex]);
+            io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
         }
     });
 
     socket.on('restart_game', (data) => {
         var foundIndex = findSession(""+data.hash);
         if (foundIndex) {
-            sessions[foundIndex].play_board = ["", "", "", "", "", "", "", "", ""],
-            sessions[foundIndex].current_symbol = "",
-            sessions[foundIndex].player_turn = "";
-            sessions[foundIndex].started = 0
+            SESSIONS[foundIndex].play_board = ["", "", "", "", "", "", "", "", ""],
+            SESSIONS[foundIndex].current_symbol = "",
+            SESSIONS[foundIndex].player_turn = "";
+            SESSIONS[foundIndex].started = 0
 
-            io.to(data.hash).emit('session_update', sessions[foundIndex]);
+            io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
         }
     })
 
@@ -184,10 +166,10 @@ io.on('connection', (socket) => {
 
             removeSocketFromSession(data.name, data.hash)
 
-            io.to(data.hash).emit('session_update', sessions[foundIndex]);
+            io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
 
             // check if room is full
-            if(sessions[foundIndex].players.length < 2){
+            if(SESSIONS[foundIndex].players.length < 2){
                 io.to(data.hash).emit('session_cancel');
             }
         }
@@ -196,21 +178,21 @@ io.on('connection', (socket) => {
     socket.on('disconnect', function (reason) {
         debugLog('[disconnect] Socket '+socket.id+' disconnected', reason);
 
-        // remove player from all or any sessions
-        for (let i in sessions) {
+        // remove player from all or any SESSIONS
+        for (let i in SESSIONS) {
 
             // remove player first
-            for (let s in sessions[i].players) {
-                if (socket.id == sessions[i].players[s]) {
-                    sessions[i].players.splice(s, 1);
-                    io.to(sessions[i].id).emit('session_update', sessions[i]);
+            for (let s in SESSIONS[i].players) {
+                if (socket.id == SESSIONS[i].players[s]) {
+                    SESSIONS[i].players.splice(s, 1);
+                    io.to(SESSIONS[i].id).emit('session_update', SESSIONS[i]);
                 }
             }
 
             // IF GAME STARTED AND LESS THAN 2 PLAYERS, SESSION IS REMOVED
-            if(sessions[i].started === 1 && sessions[i].players.length < 2) {
-                io.to(sessions[i].id).emit('session_cancel');
-                sessions.splice(i, 1);
+            if(SESSIONS[i].started === 1 && SESSIONS[i].players.length < 2) {
+                io.to(SESSIONS[i].id).emit('session_cancel');
+                SESSIONS.splice(i, 1);
             }
         }
     });
@@ -256,12 +238,12 @@ function checkForWinners(gameState) {
 }
 
 function removeSocketFromSession(name, hash) {
-    for (let i in sessions) {
+    for (let i in SESSIONS) {
         console.log();
-        if(sessions[i].id === hash) {
-            for (let s in sessions[i].players) {
-                if (name == sessions[i].players[s].name) {
-                    sessions[i].players.splice(s, 1);
+        if(SESSIONS[i].id === hash) {
+            for (let s in SESSIONS[i].players) {
+                if (name == SESSIONS[i].players[s].name) {
+                    SESSIONS[i].players.splice(s, 1);
                 }
             }
         }
@@ -269,8 +251,8 @@ function removeSocketFromSession(name, hash) {
 }
 
 findSession = (hash) => {
-    for (let i in sessions) {
-        if (hash == sessions[i].id) {
+    for (let i in SESSIONS) {
+        if (hash == SESSIONS[i].id) {
             return i;
         }
     }
@@ -278,10 +260,10 @@ findSession = (hash) => {
 }
 
 findUserInSession = (name, hash) => {
-    for (let i in sessions) {
-        if(sessions[i].id !== hash) continue;
-        for (let s in sessions[i].players) {
-            if (name == sessions[i].players[s].name) {
+    for (let i in SESSIONS) {
+        if(SESSIONS[i].id !== hash) continue;
+        for (let s in SESSIONS[i].players) {
+            if (name == SESSIONS[i].players[s].name) {
                 return s;
             }
         }

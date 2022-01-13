@@ -12,10 +12,11 @@ import Default from "./layouts/Default";
 Vue.component('default_layout', Default);
 
 // START SOCKET IO
+let SOCKET_URL = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5000/';
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   debug: false,
-  connection: '/',
+  connection: SOCKET_URL,
   options: {
     'reconnectionDelay': 1000,
     'reconnectionDelayMax' : 5000,

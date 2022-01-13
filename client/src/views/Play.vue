@@ -62,31 +62,6 @@
   </div>
 </template>
 
-<style>
-.play-area {
-  display: grid;
-  width: 300px;
-  height: 300px;
-  grid-template-columns: auto auto auto;
-}
-.block {
-  display: flex;
-  width: 100px;
-  height: 100px;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  font-weight: bold;
-  border: 3px solid black;
-  transition: background 0.2s ease-in-out;
-}
-
-.block:hover {
-  cursor: pointer;
-  background: #0ff30f;
-}
-</style>
-
 <script>
 export default {
   name: 'Play',
