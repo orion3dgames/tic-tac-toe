@@ -63,7 +63,7 @@ chat_server.listen(io_config.port, function () {
 // SOCKET EVENTS
 io.on('connection', (socket) => {
 
-    debugLog('[IO] Connected: ', socket.nsp);
+    debugLog('[IO] Connected: ', socket.id);
 
     socket.on('create_game', (data) => {
         debugLog('[create_game] Create Game Received', data.hash);
