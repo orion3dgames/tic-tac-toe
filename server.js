@@ -11,13 +11,12 @@ const PORT = process.env.PORT || 8080;
 ////////////////////////////////////////////////////////////////////
 ////////////////    START APP CLIENT      //////////////////////////
 
+let indexPath = "client/dist/";
+let clientFile = "/index.html";
+
+const app = express();
+
 // ONLY USE THIS WHEN IN PRODUCTION (locally we will use yarn serve directly in the client folder)
-
-
-    let indexPath = "client/dist/";
-    let clientFile = "/index.html";
-
-    const app = express();
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(indexPath));
     app.get('/', function (req, res) {
@@ -26,7 +25,6 @@ if (process.env.NODE_ENV === 'production') {
     app.get('/play', function (req, res) {
         res.sendFile(indexPath + clientFile, {root: __dirname});
     });
-
 }
 
 const server = require('http').createServer(app);
