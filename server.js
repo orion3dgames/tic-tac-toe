@@ -103,6 +103,7 @@ io.on('connection', (socket) => {
                 // warn client room is full
                 socket.emit('session_cancel');
             }
+
         }else{
 
             io.to(data.hash).emit('session_cancel');
@@ -116,26 +117,22 @@ io.on('connection', (socket) => {
         var foundIndex = findSession(""+data.hash);
         if (foundIndex) {
 
+            // UPDATE NEXT SYMBOL
             SESSIONS[foundIndex].current_symbol = SESSIONS[foundIndex].current_symbol === 'O' ? 'X':'O';
-
-            //
             SESSIONS[foundIndex].play_board[data.index] = SESSIONS[foundIndex].current_symbol;
 
-            // CHECK FOR WIN
+            // CHECK FOR WINNER
             if(checkForWinners(SESSIONS[foundIndex].play_board)){
                 console.log(data, "HAS WON");
                 io.to(data.hash).emit('player_won', data);
+                return false;
+            }
 
             // ELSE CONTINUE
-            }else{
-
-                // switch turn
-                for (let s in SESSIONS[foundIndex].players) {
-                    if (data.name !== SESSIONS[foundIndex].players[s].name) {
-                        SESSIONS[foundIndex].player_turn = SESSIONS[foundIndex].players[s].name;
-                    }
+            for (let s in SESSIONS[foundIndex].players) {
+                if (data.name !== SESSIONS[foundIndex].players[s].name) {
+                    SESSIONS[foundIndex].player_turn = SESSIONS[foundIndex].players[s].name;
                 }
-
             }
 
             // give update to room
@@ -149,8 +146,7 @@ io.on('connection', (socket) => {
             SESSIONS[foundIndex].play_board = ["", "", "", "", "", "", "", "", ""],
             SESSIONS[foundIndex].current_symbol = "",
             SESSIONS[foundIndex].player_turn = "";
-            SESSIONS[foundIndex].started = 0
-
+            SESSIONS[foundIndex].started = 0;
             io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
         }
     })
@@ -187,7 +183,7 @@ io.on('connection', (socket) => {
                 }
             }
 
-            // IF GAME STARTED AND LESS THAN 2 PLAYERS, SESSION IS REMOVED
+            // IF GAME STARTED AND LESS THAN 2 PLAYERS, GAME SESSION IS DELETED AND REMAINING PLAYER ARE KICK FROM THE ROOM
             if(SESSIONS[i].started === 1 && SESSIONS[i].players.length < 2) {
                 io.to(SESSIONS[i].id).emit('session_cancel');
                 SESSIONS.splice(i, 1);
