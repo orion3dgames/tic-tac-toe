@@ -2,10 +2,11 @@
   <div class="container">
 
     <header class="p-2">
-      <div class="float-end">
-        {{name}} | {{$socket.id}}
+      <div class="float-end text-right">
+        <div class="badge bg-primary">USERNAME: {{ user.name }}</div><br>
+        <div class="badge bg-primary">SOCKET_ID: {{ $socket.id }}</div>
       </div>
-      <h3 class="m-0"><router-link :to="'/'">A Long Title</router-link></h3>
+      <h3 class="m-0"><router-link :to="'/'">{{ appTitle }}</router-link></h3>
     </header>
 
     <hr />
@@ -17,10 +18,14 @@
 <script>
 export default {
   computed: {
-    name() {
-      return this.$cookie.get('name');
-    }
+    appTitle() {
+      return this.$store.getters.appTitle;
+    },
+    user() {
+      return this.$store.getters.currentUser;
+    },
   },
+
   components: {
   }
 };

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import Vuex from 'vuex'
 
 Vue.config.productionTip = false
 
@@ -27,7 +28,17 @@ Vue.use(new VueSocketIO({
 var VueCookie = require('vue-cookie');
 Vue.use(VueCookie);
 
+// VUEX
+Vue.use(Vuex);
+import store from './store'
+
 new Vue({
   router,
+  store: store,
   render: h => h(App),
+  data: function(){
+    return {
+      user: {}
+    }
+  },
 }).$mount('#app')

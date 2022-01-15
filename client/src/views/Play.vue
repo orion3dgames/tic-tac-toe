@@ -5,8 +5,8 @@
       <div class="row align-items-center">
         <div class="col-auto">
           <div class="input-group">
-            <span class="input-group-text">Share URL</span>
-            <input type="text" v-model="share_url" class="form-control" />
+            <span class="input-group-text">{{share_url}}</span>
+            <button class="btn btn-outline-primary" type="button" id="button-addon2">Copy Share Link</button>
           </div>
         </div>
         <div class="col-auto">
