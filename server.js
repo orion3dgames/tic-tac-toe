@@ -177,7 +177,7 @@ io.on('connection', (socket) => {
 
             // remove player first
             for (let s in SESSIONS[i].players) {
-                if (socket.id == SESSIONS[i].players[s]) {
+                if (socket.id == SESSIONS[i].players[s].socket_id) {
                     SESSIONS[i].players.splice(s, 1);
                     io.to(SESSIONS[i].id).emit('session_update', SESSIONS[i]);
                 }

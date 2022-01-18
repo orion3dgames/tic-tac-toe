@@ -6,7 +6,7 @@
         <div class="col-auto">
           <div class="input-group">
             <span class="input-group-text">{{share_url}}</span>
-            <button class="btn btn-outline-primary" type="button" id="button-addon2">Copy Share Link</button>
+            <button class="btn btn-outline-primary" type="button" @click="copyLink()">Copy Share Link</button>
           </div>
         </div>
         <div class="col-auto">
@@ -98,6 +98,17 @@ export default {
     },
     startGame(){
       this.$socket.emit('start_game', { 'hash': this.hash, name: this.name });
+    },
+    copyLink(){
+
+      var copyText = this.share_url;
+
+      /* Copy the text inside the text field */
+      navigator.clipboard.writeText(copyText);
+
+      /* Alert the copied text */
+      alert("Link Copied! Please share with a friend to start a game.");
+
     },
     squareClick(index){
       if(this.session.player_turn === this.name && !this.session.play_board[index]) {
