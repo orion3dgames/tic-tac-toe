@@ -16,7 +16,7 @@
       <tbody>
         <tr v-for="session in sessions" :key="session.id">
           <td>{{session.id}}</td>
-          <td>{{session.players}}</td>
+          <td>{{session.players}}/2</td>
           <td class="text-right"><button @click="joinGame(session.id)" class="btn btn-primary">Join</button></td>
         </tr>
       </tbody>

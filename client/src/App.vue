@@ -39,6 +39,8 @@ export default {
         'name': username
       });*/
 
+      //this.$socket.emit('add_player', { 'username': this.$store.getters.currentUser });
+
     })
   },
 }

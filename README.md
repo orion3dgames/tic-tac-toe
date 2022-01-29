@@ -1,7 +1,9 @@
 # TIC TAC TOE
 A small personal to test my skills. End goal is for users to easily share a link to a friend to play a quick tic tac toe games, all while keeping the score
 
-DEMO LINK: https://tictactoe-vuejs.herokuapp.com/
+**ONLY RULE I SET FOR MYSELF, NO COPYING OR LOOKING AT SIMILAR TIC TAC TOE CODE FROM INTERNET**
+
+CURRENT DEMO LINK: https://tictactoe-vuejs.herokuapp.com/
 
 ## Initial Goal
 I'm going to build it quick and dirty and then refine until I'm happy with the result.
@@ -16,10 +18,6 @@ I'm going to build it quick and dirty and then refine until I'm happy with the r
 - Implement a better UI
 - Implement a better scoring system ()
 - Implement a database system  (like Firebase)
-   
-## Latest Updates
-- 13/01/2022: Refactored the server and architecture to work with HEROKU + Added a demo link.
-- 12/01/2022: Initial quick and dirty version
 
 ## Installation Guide
 - Clone the repository
@@ -35,4 +33,4 @@ I'm going to build it quick and dirty and then refine until I'm happy with the r
 Using socket.io, will allow to realtime messaging between users and keeping records of current game sessions and scores 
 - Initially, all information will be lost when the server is restarted as we have not implemented a database yet.
 #### 2) A CLIENT APP
-Will use VUE.JS and interact with the SOCKET SERVER
+Will use VUE.JS 2 and interact with the SOCKET SERVER

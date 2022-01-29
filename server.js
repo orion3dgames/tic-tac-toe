@@ -34,6 +34,7 @@ server.listen(PORT, function () {
 
 const DEBUG = true;
 let SESSIONS = [];
+let ONLINE_PLAYERS = [];
 const MAX_PLAYERS = 2;
 const DEFAULT_BOARD = ["", "", "", "", "", "", "", "", ""];
 const WINNING_CONDITIONS = [
@@ -200,6 +201,10 @@ io.on('connection', (socket) => {
                 io.to(data.hash).emit('session_cancel');
             }
 
+            if(SESSIONS[foundIndex] && SESSIONS[foundIndex].players.length === 0){
+                SESSIONS.splice(foundIndex, 1);
+            }
+
         }
     });
 
@@ -227,7 +232,7 @@ io.on('connection', (socket) => {
 
     socket.on('load_games', (data) => {
 
-        var game_sessions  = SESSIONS.map(session => {
+        var game_sessions = SESSIONS.map(session => {
             var newObj = {};
             newObj["id"] = session.id;
             newObj["players"] = session.players.length;
@@ -239,9 +244,24 @@ io.on('connection', (socket) => {
         socket.emit('sessions', game_sessions);
     });
 
+    /*
+    socket.on('add_player', (data) => {
+
+        var foundIndex = findUser(data.username);
+        if (!foundIndex) {
+            ONLINE_PLAYERS.push({
+                'username': data.username,
+                'sockets': [socket.id],
+            })
+        }else{
+            ONLINE_PLAYERS[foundIndex].sockets.push(socket.id);
+        }
+
+    });*/
+
     socket.on('debug', (data) => {
 
-        debugLog("[DEBUG]", SESSIONS);
+        debugLog("[DEBUG]", SESSIONS, ONLINE_PLAYERS);
 
     });
 
@@ -254,6 +274,25 @@ function debugLog(msg, data) {
     if(DEBUG){
         console.log(msg, (data ? data : false));
     }
+}
+
+findUser = (username, socket_id) => {
+    for (let s in ONLINE_PLAYERS) {
+        if (username == ONLINE_PLAYERS[s].username) {
+            return s
+        }
+    }
+    return false;
+}
+
+findSocket = (user_index, socket_id) => {
+    if(!online_users[user_index]) return false;
+    for (let s in online_users[user_index].sockets) {
+        if (socket_id == online_users[user_index].sockets[s]) {
+            return online_users[user_index].sockets[s]
+        }
+    }
+    return false;
 }
 
 function checkForWinners(gameState) {
@@ -303,16 +342,6 @@ findUserInSession = (name, hash) => {
             if (name == SESSIONS[i].players[s].name) {
                 return s;
             }
-        }
-    }
-    return false;
-}
-
-findSocket = (user_index, socket_id) => {
-    if(!online_users[user_index]) return false;
-    for (let s in online_users[user_index].sockets) {
-        if (socket_id == online_users[user_index].sockets[s]) {
-            return online_users[user_index].sockets[s]
         }
     }
     return false;
