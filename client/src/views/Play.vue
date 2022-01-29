@@ -15,9 +15,6 @@
         <div class="col-auto">
           <button @click="startGame()" class="btn btn-primary" v-if="session.players && session.players.length === 2 && session.started === 0">Start Game</button>
         </div>
-        <div class="col-auto">
-          <button @click="debug()" class="btn btn-primary">DEBUG</button>
-        </div>
       </div>
     </div>
 
@@ -49,7 +46,6 @@
 
         </div>
 
-        {{session}}
       </div>
       <div class="col-sm-4">
         <h5>Users</h5>
