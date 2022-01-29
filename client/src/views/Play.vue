@@ -10,10 +10,13 @@
           </div>
         </div>
         <div class="col-auto">
-          <button @click="leaveGame()" class="btn btn-secondary">Leave</button>
+          <button @click="leaveGame()" class="btn btn-secondary">Leave Game</button>
         </div>
         <div class="col-auto">
-          <button @click="startGame()" class="btn btn-primary" v-if="session.players && session.players.length === 2 && session.started === 0">Start</button>
+          <button @click="startGame()" class="btn btn-primary" v-if="session.players && session.players.length === 2 && session.started === 0">Start Game</button>
+        </div>
+        <div class="col-auto">
+          <button @click="debug()" class="btn btn-primary">DEBUG</button>
         </div>
       </div>
     </div>
@@ -53,9 +56,10 @@
         <hr>
         <ul id="example-1">
           <li v-for="player in session.players" :key="player.socket_id">
-            {{ player.name }}
+            {{ player.name }} - <b>{{ player.win }}</b>
           </li>
         </ul>
+        <p>DRAW: {{ session.draw }}</p>
       </div>
     </div>
 
@@ -92,6 +96,9 @@ export default {
   },
   methods: {
 
+    debug(){
+      this.$socket.emit('debug', { 'hash': this.hash, name: this.name });
+    },
     leaveGame(){
       this.$socket.emit('leave_game', { 'hash': this.hash, name: this.name });
       this.$router.push({ path: '/' });

@@ -20,8 +20,7 @@ export default {
   },
   mounted: function () {
     this.$nextTick(function () {
-
-      /*
+      
       if(this.$cookie.get('name')){
         this.$store.dispatch('setUser', {
           'name': this.$cookie.get('name')
@@ -32,12 +31,13 @@ export default {
         this.$store.dispatch('setUser', {
           'name': username
         });
-      }*/
+      }
+      /*
       let username = usernameGen.generateUsername(10, false);
       this.$cookie.set('name', username, 1);
       this.$store.dispatch('setUser', {
         'name': username
-      });
+      });*/
 
     })
   },
