@@ -225,6 +225,20 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('load_games', (data) => {
+
+        var game_sessions  = SESSIONS.map(session => {
+            var newObj = {};
+            newObj["id"] = session.id;
+            newObj["players"] = session.players.length;
+            if(session.started === 0) {
+                return newObj;
+            }
+        });
+
+        socket.emit('sessions', game_sessions);
+    });
+
     socket.on('debug', (data) => {
 
         debugLog("[DEBUG]", SESSIONS);

@@ -20,7 +20,7 @@ export default {
   },
   mounted: function () {
     this.$nextTick(function () {
-      
+
       if(this.$cookie.get('name')){
         this.$store.dispatch('setUser', {
           'name': this.$cookie.get('name')
