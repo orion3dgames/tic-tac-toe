@@ -202,8 +202,8 @@ io.on('connection', (socket) => {
         let foundIndex = SESSIONS.findIndex(session => session.id === data.hash);
         if (foundIndex === undefined) return false;
 
-        // REMOVE SOCKET
-        removeSocketFromSession(data.name, data.hash)
+        // REMOVE PLAYER
+        removePlayerFromSession(data.name, data.hash)
 
         // SET UPDATED ROOM
         io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
@@ -329,7 +329,7 @@ function checkForWinners(gameState) {
     return roundWon;
 }
 
-function removeSocketFromSession(name, hash) {
+function removePlayerFromSession(name, hash) {
     for (let i in SESSIONS) {
         if(SESSIONS[i].id === hash) {
             for (let s in SESSIONS[i].players) {
