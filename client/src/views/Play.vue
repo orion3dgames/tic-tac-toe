@@ -48,14 +48,35 @@
 
       </div>
       <div class="col-sm-4">
-        <h5>Users</h5>
+
+        <table class="table table-bordered table-sm">
+          <thead class="table-light">
+            <tr>
+              <th v-for="player in session.players" :key="player.socket_id" class="text-center">{{ player.name }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td v-for="player in session.players" :key="player.socket_id" class="text-center"><span class="display-2">{{ player.win }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h5>Chat</h5>
         <hr>
-        <ul id="example-1">
-          <li v-for="player in session.players" :key="player.socket_id">
-            {{ player.name }} - <b>{{ player.win }}</b>
+        <ul class="list-unstyled">
+          <li v-for="(msg, index) in session.messages" :key="index">
+            <b><small class="text-muted">{{ msg.name }}</small></b>: {{ msg.message }}
           </li>
         </ul>
-        <p>DRAW: {{ session.draw }}</p>
+
+        <form class="row row-cols-lg-auto g-3 align-items-center" @submit.prevent="sendMessage">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" v-model="chat_message" placeholder="Message">
+            <button type="submit" class="btn btn-primary">Send</button>
+          </div>
+        </form>
+
       </div>
     </div>
 
@@ -71,6 +92,7 @@ export default {
   data() {
     return {
       session: {},
+      chat_message: '',
     }
   },
   computed: {
@@ -93,25 +115,23 @@ export default {
   methods: {
 
     debug(){
-      this.$socket.emit('debug', { 'hash': this.hash, name: this.name });
+      this.$socket.emit('debug', { 'hash': this.hash, 'name': this.name });
     },
     leaveGame(){
-      this.$socket.emit('leave_game', { 'hash': this.hash, name: this.name });
+      this.$socket.emit('leave_game', { 'hash': this.hash, 'name': this.name });
       this.$router.push({ path: '/' });
     },
     startGame(){
-      this.$socket.emit('start_game', { 'hash': this.hash, name: this.name });
+      this.$socket.emit('start_game', { 'hash': this.hash, 'name': this.name });
+    },
+    sendMessage(){
+      this.$socket.emit('add_message', { 'hash': this.hash, 'name': this.name, 'message': this.chat_message });
+      this.chat_message = '';
     },
     copyLink(){
-
       var copyText = this.share_url;
-
-      /* Copy the text inside the text field */
       navigator.clipboard.writeText(copyText);
-
-      /* Alert the copied text */
       alert("Link Copied! Please share with a friend to start a game.");
-
     },
     squareClick(index){
       if(this.session.player_turn === this.name && !this.session.play_board[index]) {

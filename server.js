@@ -66,6 +66,7 @@ io.on('connection', (socket) => {
             'id': ""+data.hash,
             'players': [],
             'player_turn': [],
+            'messages': [],
             'current_symbol': SYMBOL_O,
             'play_board': [...DEFAULT_BOARD],
             'started': 0,
@@ -167,8 +168,6 @@ io.on('connection', (socket) => {
         // CHECK FOR WINNER
         if(checkForWinners(session.play_board)){
 
-            console.log(data, "HAS WON");
-
             // INCREMENT SCORE
             let s = session.players.findIndex(player => player.name === data.name);
             session.players[s].win += 1;
@@ -185,7 +184,6 @@ io.on('connection', (socket) => {
         }
 
         // ELSE FIND NEXT PLAYER
-        console.log("FIND NEXT PLAYER");
         for (let s in session.players) {
             if (data.name !== session.players[s].name) {
                 session.player_turn = session.players[s].name;
@@ -247,7 +245,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('load_games', (data) => {
-
         var game_sessions = SESSIONS.map(session => {
             var newObj = {};
             newObj["id"] = session.id;
@@ -256,8 +253,24 @@ io.on('connection', (socket) => {
                 return newObj;
             }
         });
-
         socket.emit('sessions', game_sessions);
+    });
+
+    socket.on('add_message', (data) => {
+
+        let session = findSession(data.hash);
+
+        if(session){
+            data.id = session.messages.length + 1;
+            session.messages.push(data);
+
+            if(session.messages.length > 5){
+                session.messages.splice(0, 1);
+            }
+        }
+
+        io.to(data.hash).emit('session_update', session);
+
     });
 
 });
