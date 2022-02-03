@@ -7,7 +7,7 @@
         <div class="badge bg-primary">SOCKET_ID: {{ $socket.id }}</div>
       </div>
       <h3 class="m-0">{{ appTitle }}</h3>
-      <a class="text-muted" href="https://github.com/oriongunning/tic-tac-toe">https://github.com/oriongunning/tic-tac-toe</a>
+      <a class="text-muted" href="https://github.com/oriongunning/tic-tac-toe" target="_blank">https://github.com/oriongunning/tic-tac-toe</a>
     </header>
 
     <hr />

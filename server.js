@@ -63,7 +63,7 @@ io.on('connection', (socket) => {
     socket.on('create_game', (data) => {
         debugLog('[create_game] Create Game Received', data.hash);
         let game_session = {
-            'id': data.hash,
+            'id': ""+data.hash,
             'players': [],
             'player_turn': [],
             'current_symbol': SYMBOL_O,
@@ -76,139 +76,155 @@ io.on('connection', (socket) => {
 
     socket.on('start_game', (data) => {
 
-        var foundIndex = findSession(""+data.hash);
-        if (foundIndex) {
-            SESSIONS[foundIndex].started = 1;
-            SESSIONS[foundIndex].player_turn = SESSIONS[foundIndex].players[0].name;
+        let session = findSession(data.hash);
 
-            // give update to room
-            io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
+        if (!session) {
+            io.to(data.hash).emit('session_cancel', {'message': 'Start game failed.'});
+            return false;
         }
+
+        // UPDATE GAME SESSION
+        session.started = 1;
+        session.player_turn = session.players[0].name; // FIRST PLAYER IN ARRAY STARTS
+
+        //
+        io.to(data.hash).emit('session_update', session);
+
     });
 
     socket.on('join_game', (data) => {
 
         debugLog('[join_game] Join Game Received', data.hash);
 
-        var foundIndex = findSession(""+data.hash);
-        if (!foundIndex) {
-            io.to(data.hash).emit('session_cancel');
+        let session = findSession(data.hash);
+
+        // IF GAME SESSION NOT FOUND
+        if (!session) {
+            io.to(data.hash).emit('session_cancel', {'message': 'Game does not exists.'});
             return false;
         }
 
-        var foundUserIndex = findUserInSession(data.name, data.hash);
+        // IF NOT ALREADY THERE, AND PLAYERS LENGTH < MAX_PLAYERS
+        if(session.players.length < MAX_PLAYERS){
 
-        // check if room is full
-        if(SESSIONS[foundIndex].players.length < MAX_PLAYERS || foundUserIndex){
-
-            // add player
-            if(!foundUserIndex){
-                SESSIONS[foundIndex].players.push({
-                    'socket_id': socket.id,
-                    'name': data.name,
-                    'win': 0,
-                });
+            // IS THIS USER ALREADY THERE
+            let player = findSessionPlayer(data.hash, data.name);
+            if(player){
+                return false;
             }
 
-            // join the new room
+            // ADD USER
+            session.players.push({
+                'socket_id': socket.id,
+                'name': data.name,
+                'win': 0,
+            });
+
+            // JOIN SOCKET ROOM
             socket.join(data.hash);
-            debugLog('[join_game] Socket Room Joined', data.hash);
 
-            // give update to room
-            io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
-            debugLog('[session_update] Session updated', data.hash);
+            // UPDATE GAME SESSION
+            io.to(data.hash).emit('session_update', session);
 
-        }else{
-
-            // warn client room is full
-            socket.emit('session_cancel');
+            return false;
         }
+
+        // warn client join has failed
+        socket.emit('session_cancel', {'message': 'Failed to join game.'});
 
     });
 
     socket.on('click_square', (data) => {
+
         debugLog('[click_square] Click Square Received', data.hash);
-        var foundIndex = findSession(""+data.hash);
-        if (foundIndex) {
 
-            // UPDATE NEXT SYMBOL
-            SESSIONS[foundIndex].current_symbol = SESSIONS[foundIndex].current_symbol === 'O' ? 'X':'O';
-            SESSIONS[foundIndex].play_board[data.index] = SESSIONS[foundIndex].current_symbol;
+        let session = findSession(data.hash);
 
-            // CHECK FOR DRAW
-            let roundDraw = !SESSIONS[foundIndex].play_board.includes("");
-            if (roundDraw) {
-                console.log(data, "IS A DRAW");
-                SESSIONS[foundIndex].play_board = [...DEFAULT_BOARD],
-                SESSIONS[foundIndex].current_symbol = SYMBOL_O,
-                SESSIONS[foundIndex].player_turn = data.name;
-                SESSIONS[foundIndex].started = 1;
-                SESSIONS[foundIndex].draw += 1;
-
-                io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
-
-                return false;
-            }
-
-            // CHECK FOR WINNER
-            if(checkForWinners(SESSIONS[foundIndex].play_board)){
-
-                console.log(data, "HAS WON");
-
-                // INCREMENT SCORE
-                let s = findUserInSession(data.name, data.hash)
-                SESSIONS[foundIndex].players[s].win += 1;
-
-                // RESTART GAME
-                SESSIONS[foundIndex].play_board = [...DEFAULT_BOARD],
-                SESSIONS[foundIndex].current_symbol = SYMBOL_O,
-                SESSIONS[foundIndex].player_turn = data.name;
-                SESSIONS[foundIndex].started = 1;
-
-                io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
-
-                return false;
-            }
-
-            // ELSE FIND NEXT PLAYER
-            console.log("FIND NEXT PLAYER");
-            for (let s in SESSIONS[foundIndex].players) {
-                if (data.name !== SESSIONS[foundIndex].players[s].name) {
-                    SESSIONS[foundIndex].player_turn = SESSIONS[foundIndex].players[s].name;
-                }
-            }
-
-            // give update to room
-            io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
+        if (!session) {
+            io.to(data.hash).emit('session_cancel', {'message': 'Start game failed.'});
+            return false;
         }
+
+        // UPDATE NEXT SYMBOL
+        session.current_symbol = session.current_symbol === 'O' ? 'X':'O';
+        session.play_board[data.index] = session.current_symbol;
+
+        // CHECK FOR DRAW
+        let roundDraw = !session.play_board.includes("");
+        if (roundDraw) {
+            console.log(data, "IS A DRAW");
+            session.play_board = [...DEFAULT_BOARD],
+            session.current_symbol = SYMBOL_O,
+            session.player_turn = data.name;
+            session.started = 1;
+            session.draw += 1;
+
+            io.to(data.hash).emit('session_update', session);
+
+            return false;
+        }
+
+        // CHECK FOR WINNER
+        if(checkForWinners(session.play_board)){
+
+            console.log(data, "HAS WON");
+
+            // INCREMENT SCORE
+            let s = session.players.findIndex(player => player.name === data.name);
+            session.players[s].win += 1;
+
+            // RESTART GAME
+            session.play_board = [...DEFAULT_BOARD],
+            session.current_symbol = SYMBOL_O,
+            session.player_turn = data.name;
+            session.started = 1;
+
+            io.to(data.hash).emit('session_update', session);
+
+            return false;
+        }
+
+        // ELSE FIND NEXT PLAYER
+        console.log("FIND NEXT PLAYER");
+        for (let s in session.players) {
+            if (data.name !== session.players[s].name) {
+                session.player_turn = session.players[s].name;
+            }
+        }
+
+        // give update to room
+        io.to(data.hash).emit('session_update', session);
+
     });
 
     socket.on('leave_game', (data) => {
 
         debugLog('[leave_game] Leave Game Received', data.hash);
 
-        var foundIndex = findSession(""+data.hash);
-        if (foundIndex) {
+        let foundIndex = SESSIONS.findIndex(session => session.id === data.hash);
+        if (foundIndex === undefined) return false;
 
-            removeSocketFromSession(data.name, data.hash)
+        // REMOVE SOCKET
+        removeSocketFromSession(data.name, data.hash)
 
-            // UPDATE ROOM
-            io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
+        // SET UPDATED ROOM
+        io.to(data.hash).emit('session_update', SESSIONS[foundIndex]);
 
-            // IF SOMEONE LEAVES DURING THE GAME, CANCEL GAME
-            if(SESSIONS[foundIndex].started === 1 && SESSIONS[foundIndex].players.length < MAX_PLAYERS){
-                SESSIONS.splice(foundIndex, 1);
-                io.to(data.hash).emit('session_cancel');
-            }
-
-            if(SESSIONS[foundIndex] && SESSIONS[foundIndex].players.length === 0){
-                SESSIONS.splice(foundIndex, 1);
-            }
-
+        // IF SOMEONE LEAVES DURING THE GAME, CANCEL GAME
+        if(SESSIONS[foundIndex] && SESSIONS[foundIndex].started === 1 && SESSIONS[foundIndex].players.length < MAX_PLAYERS){
+            SESSIONS.splice(foundIndex, 1);
+            io.to(data.hash).emit('session_cancel', {'message': 'Your opponent has left'});
         }
+
+        // IF SESSION EXISTS AND NO PLAYERS LEFT, MIGHT AS WELL DELETE IT
+        if(SESSIONS[foundIndex] && SESSIONS[foundIndex].players.length === 0){
+            SESSIONS.splice(foundIndex, 1);
+        }
+
     });
 
     socket.on('disconnect', function (reason) {
+
         debugLog('[disconnect] Socket '+socket.id+' disconnected', reason);
 
         // remove player from all or any SESSIONS
@@ -224,7 +240,7 @@ io.on('connection', (socket) => {
 
             // IF GAME STARTED AND LESS THAN 2 PLAYERS, GAME SESSION IS DELETED AND REMAINING PLAYER ARE KICK FROM THE ROOM
             if(SESSIONS[i].started === 1 && SESSIONS[i].players.length < 2) {
-                io.to(SESSIONS[i].id).emit('session_cancel');
+                io.to(SESSIONS[i].id).emit('session_cancel', {'message': 'Your opponent has been disconnected.'});
                 SESSIONS.splice(i, 1);
             }
         }
@@ -244,27 +260,6 @@ io.on('connection', (socket) => {
         socket.emit('sessions', game_sessions);
     });
 
-    /*
-    socket.on('add_player', (data) => {
-
-        var foundIndex = findUser(data.username);
-        if (!foundIndex) {
-            ONLINE_PLAYERS.push({
-                'username': data.username,
-                'sockets': [socket.id],
-            })
-        }else{
-            ONLINE_PLAYERS[foundIndex].sockets.push(socket.id);
-        }
-
-    });*/
-
-    socket.on('debug', (data) => {
-
-        debugLog("[DEBUG]", SESSIONS, ONLINE_PLAYERS);
-
-    });
-
 });
 
 //////////////////////////////////////////////////////////
@@ -276,6 +271,23 @@ function debugLog(msg, data) {
     }
 }
 
+findSession = (hash) => {
+    let foundIndex = SESSIONS.findIndex(session => session.id === hash);
+    return SESSIONS[foundIndex];
+}
+
+findSessionPlayer = (hash, username) => {
+    let session = findSession(hash);
+    if(!session){
+        return false;
+    }
+    let foundUserIndex = session.players.findIndex(player => player.name === username);
+    if(!session.players[foundUserIndex]){
+     return false;
+    }
+    return session.players[foundUserIndex]
+}
+
 findUser = (username, socket_id) => {
     for (let s in ONLINE_PLAYERS) {
         if (username == ONLINE_PLAYERS[s].username) {
@@ -285,15 +297,6 @@ findUser = (username, socket_id) => {
     return false;
 }
 
-findSocket = (user_index, socket_id) => {
-    if(!online_users[user_index]) return false;
-    for (let s in online_users[user_index].sockets) {
-        if (socket_id == online_users[user_index].sockets[s]) {
-            return online_users[user_index].sockets[s]
-        }
-    }
-    return false;
-}
 
 function checkForWinners(gameState) {
     let roundWon = false;
@@ -315,7 +318,6 @@ function checkForWinners(gameState) {
 
 function removeSocketFromSession(name, hash) {
     for (let i in SESSIONS) {
-        console.log();
         if(SESSIONS[i].id === hash) {
             for (let s in SESSIONS[i].players) {
                 if (name == SESSIONS[i].players[s].name) {
@@ -324,27 +326,6 @@ function removeSocketFromSession(name, hash) {
             }
         }
     }
-}
-
-findSession = (hash) => {
-    for (let i in SESSIONS) {
-        if (hash == SESSIONS[i].id) {
-            return i;
-        }
-    }
-    return false;
-}
-
-findUserInSession = (name, hash) => {
-    for (let i in SESSIONS) {
-        if(SESSIONS[i].id !== hash) continue;
-        for (let s in SESSIONS[i].players) {
-            if (name == SESSIONS[i].players[s].name) {
-                return s;
-            }
-        }
-    }
-    return false;
 }
 
 function debugLog(msg, data) {

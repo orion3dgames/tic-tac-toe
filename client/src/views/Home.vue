@@ -17,7 +17,7 @@
         <tr v-for="session in sessions" :key="session.id">
           <td>{{session.id}}</td>
           <td>{{session.players}}/2</td>
-          <td class="text-right"><button @click="joinGame(session.id)" class="btn btn-primary">Join</button></td>
+          <td class="text-end"><button @click="joinGame(session.id)" class="btn btn-primary">Join</button></td>
         </tr>
       </tbody>
     </table>
@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     hash(){
-      return this.rndStr(5)
+      return this.generateGameHash(5)
     },
   },
   mounted() {
@@ -57,7 +57,7 @@ export default {
       this.$router.push({ path: 'play/'+hash });
     },
 
-    rndStr(len) {
+    generateGameHash(len) {
       let text = "#"
       let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
       for( let i=0; i < len; i++ ) {
