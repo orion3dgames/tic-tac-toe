@@ -15,8 +15,7 @@ I'm going to build it quick and dirty and then refine until I'm happy with the r
 - Create and share a link (DONE)
 - Game waiting room until 2 players join with the same sharing link (DONE)
 - Playing the tic-tac-toe game (DONE)
-- Implement a better UI
-- Implement a better scoring system ()
+- Adding a mini chat (DONE)
 - Implement a database system  (like Firebase)
 
 ## Installation Guide
