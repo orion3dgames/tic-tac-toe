@@ -6,6 +6,7 @@ export default new Vuex.Store({
 
   state: {
     appTitle: process.env.VUE_APP_TITLE || 'NO TITLE FOUND IN MANIFEST.JSON',
+    appDescription: process.env.VUE_APP_DESCRIPTION || 'NO DESCRIPTION FOUND IN MANIFEST.JSON',
     appVersion: process.env.VUE_APP_VERSION || 'NO VERSION FOUND IN MANIFEST.JSON',
     currentUser: {
       username: 'username',
@@ -19,6 +20,9 @@ export default new Vuex.Store({
     },
     appTitle: (state) => {
       return state.appTitle
+    },
+    appDescription: (state) => {
+      return state.appDescription
     },
     currentUser(state) {
       return state.currentUser;

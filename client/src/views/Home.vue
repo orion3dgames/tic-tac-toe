@@ -1,26 +1,33 @@
 <template>
   <div>
+
     <button @click="createGame()" class="btn btn-primary">Start New Game</button>
 
     <hr>
 
-    <h5>Existing Games</h5>
-    <table class="table table-sm table-bordered">
-      <thead>
-        <tr>
-          <th>Game</th>
-          <th>Players</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="session in sessions" :key="session.id">
-          <td>{{session.id}}</td>
-          <td>{{session.players}}/2</td>
-          <td class="text-end"><button @click="joinGame(session.id)" class="btn btn-primary">Join</button></td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if="sessions.length > 0">
+      <h5>Existing Games</h5>
+      <table class="table table-sm table-bordered">
+        <thead>
+          <tr>
+            <th>Game</th>
+            <th>Players</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="session in sessions" :key="session.id">
+            <td>{{session.id}}</td>
+            <td>{{session.players}}/2</td>
+            <td class="text-end"><button @click="joinGame(session.id)" class="btn btn-primary">Join</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div v-else>
+      <div class="alert bg-light">No games available...</div>
+    </div>
 
   </div>
 </template>

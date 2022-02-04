@@ -6,7 +6,7 @@
         <div class="col-auto">
           <div class="input-group">
             <span class="input-group-text">{{share_url}}</span>
-            <button class="btn btn-outline-primary" type="button" @click="copyLink()">Copy Share Link</button>
+            <button class="btn btn-outline-primary" type="button" @click="copyLink()">Copy</button>
           </div>
         </div>
         <div class="col-auto">
@@ -20,9 +20,6 @@
 
     <div class="row">
       <div class="col-sm-8">
-
-        <h5>Game</h5>
-        <hr>
 
         <div v-if="session.started === 1">
 
